@@ -1,3 +1,3 @@
-import Cache from './Cache';
+import FetchCache from './FetchCache';
 
-export default Cache;
+export default FetchCache;

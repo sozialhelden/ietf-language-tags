@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "module": "es2015",
+    "module": "esnext",
     "declaration": true,
     "sourceMap": true,
     "downlevelIteration": true,

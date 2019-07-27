@@ -1,19 +1,19 @@
 {
-  "name": "@sozialhelden/hamster-cache",
+  "name": "@sozialhelden/fetch-cache",
   "private": false,
   "version": "0.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "author": "Sebastian Felix Zappe <sebastian@sozialhelden.de>",
-  "repository": "sozialhelden/hamster-cache",
+  "repository": "sozialhelden/fetch-cache",
   "files": [
     "dist"
   ],
   "types": "dist/index.d.ts",
   "bundleDependencies": [],
   "deprecated": false,
-  "description": "A cache featuring eviction based on LRU, maximal item count and TTL.",
+  "description": "A cached WhatWG fetch with URLs as cache keys, featuring eviction based on LRU, maximal item count and/or TTL.",
   "devDependencies": {
     "@babel/parser": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -29,6 +29,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "ejs-loader": "^0.3.0",
     "jest": "^24.8.0",
+    "jest-cli": "^24.8.0",
     "rimraf": "^2.6.1",
     "semantic-release": "^12.0.0",
     "ts-jest": "^24.0.2",
@@ -57,5 +58,8 @@
     "format": "tslint --fix src/**/*.ts",
     "prettier": "npx prettier --fix src/**/*.ts test/**/*.ts --write --single-quote",
     "deploy": "npm build && npm run test:prod && npm publish --access public"
+  },
+  "dependencies": {
+    "@sozialhelden/hamster-cache": "^0.2.0"
   }
 }

@@ -1,60 +1,146 @@
-# Hamster Cache 🐹
+# fetch-cache 🐕
+
+A cache for WhatWG fetch calls.
 
 - Supports TypeScript
-- Evicts items by least recent use ('LRU') or age, depending on configuration
-- Evicts items if it reaches a configurable item limit on insertion
-- Evicts too old items on getting a value, or on request - based on a per-item time-to-live (TTL)
-- Lets you define a custom function to clean up, e.g. to close file handles or open connections, when it evicts an item
-- Allows you to bring your own internal cache (if it supports the ES6 `Map` interface)
-- Gives you meta information about cached objects, for stats generation or debugging
+- Uses URLs as cache keys
+- Isometric - runs in NodeJS and the browser
+- Does not request the same resource twice if the first request is still loading
+- Normalizes URLs for performance (you can configure how)
+- Customizable TTLs per request, dependent on HTTP status code or in case of network errors
+- Aborts requests on timeout or cache eviction before an incoming response, using [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
+- Supports all [Hamster Cache](https://github.com/sozialhelden/hamster-cache) features, e.g. eviction based on LRU, maximal cached item count and/or per-item TTL.
 
 ## Installation
 
 ```bash
-npm install --save @sozialhelden/hamster-cache
+npm install --save @sozialhelden/fetch-cache
 #or
-yarn add @sozialhelden/hamster-cache
+yarn add @sozialhelden/fetch-cache
 ```
 
 ## Usage examples
 
-```typescript
-import Cache from '@sozialhelden/hamster-cache';
+### Initialization
 
-const cache = new Cache<string, string>({
-  evictExceedingItemsBy: 'lru', // or 'age'
-  defaultTTL: 5000,
-  maximalItemCount: 100,
+Bring your own `fetch` - for example:
+
+- your modern browser's [fetch function](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [node-fetch](https://github.com/bitinn/node-fetch), a NodeJS implementation
+- [fetch-retry](https://github.com/jonbern/fetch-retry) for automatic request retrying with exponential backoff
+- [isomorphic-unfetch](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch), an isometric implementation for browsers (legacy and modern) and Node.js
+
+Configure the cache and use `cache.fetch()` as if you would call `fetch()` directly:
+
+```typescript
+import FetchCache from '@sozialhelden/fetch-cache';
+
+const fetch = require('node-fetch'); // in NodeJS
+// or
+const fetch = window.fetch; // in newer browsers
+
+const fetchCache = new FetchCache({
+  fetch,
+  cacheOptions: {
+    // Don't save more than 100 responses in the cache. Allows infinite responses by default
+    maximalItemCount: 100,
+    // When should the cache evict responses when its full?
+    evictExceedingItemsBy: 'lru', // Valid values: 'lru' or 'age'
+    // Cache responses for 2 minutes
+    defaultTTL: 2 * 60 * 1000,
+    // ...see https://github.com/sozialhelden/hamster-cache for all possible options
+  },
 });
 
-cache.set('key', { some: 'object' }); // Add value to the cache
+// fetches a response, with side effect that the cache evicts a cached expired response
+const url = 'https://jsonplaceholder.typicode.com/todos/1';
+fetchCache
+  .fetch(url, fetchOptions)
+  .then(response => response.body())
+  .then(console.log)
+  .catch(console.log);
+```
 
-// Add value to the cache, but with more information
-cache.set(
-  'key',
-  { some: 'object' },
-  {
-    ttl: 1000,
-    dispose() {
-      console.log('Object disposed!');
-    },
-  }
-);
+### Basic caching operations
 
-cache.peek('key'); // gets the cached value without side effects
-cache.has('key'); // `true` if an item exists in the cache, `false` otherwise
-cache.peekItem('key'); // same as `peek`, but returns value with meta information
-cache.get('key'); // gets a value with side effect that the cache evicts the object if expired
-cache.getItem('key'); // same as `get`, but returns value with meta information
-cache.evictExpiredItems(); // Do this to save memory in a setInterval call - or whenever you need it!
-cache.delete('key'); // removes an item from the cache
-cache.clear(); // forgets all items
+```typescript
+// Add an external response promise and cache it for 10 seconds
+const response = fetch('https://api.example.com');
+
+// Insert a response you got from somewhere else
+fetchCache.cache.set('http://example.com', response);
+
+// Set a custom TTL of 10 seconds for this specific response
+fetchCache.cache.set('http://example.com', response, { ttl: 10000 });
+
+// gets the cached response without side effects
+fetchCache.cache.peek(url);
+
+// `true` if a response exists in the cache, `false` otherwise
+fetchCache.cache.has(url);
+
+// same as `peek`, but returns response with meta information
+fetchCache.cache.peekItem(url);
+
+// same as `get`, but returns response with meta information
+fetchCache.cache.getItem(url);
+
+// Do this to save memory, for example in intervals
+fetchCache.cache.evictExpiredItems();
+
+// removes a response from the cache
+fetchCache.cache.delete(url);
+
+// forgets all cached responses
+fetchCache.cache.clear();
+```
+
+### Use different TTLs by HTTP response code
+
+```typescript
+const fetchCache = new FetchCache({
+  fetch,
+  responseTTL = response => {
+    // Keep successful responses in the cache for 2 minutes
+    if (response.status === 200) return 120000;
+    // Allow reattempting failed requests after 10 seconds
+    return 10000;
+  },
+  // Evict failed fetch promises after 10 seconds
+  errorTTL: error => 10000,
+});
+```
+
+### Use URL normalization
+
+This saves ressources when the same content is available under more than one URL:
+
+```bash
+npm install normalize-url
+# or
+yarn add normalize-url
+```
+
+```typescript
+import normalizeURL from 'normalize-url';
+import fetch from 'node-fetch';
+
+// Initialize a cache with URL normalization
+const cache = new FetchCache<string, string>({ fetch, normalizeURL });
+
+// Initialize a cache with configured URL normalization
+// See https://github.com/sindresorhus/normalize-url#readme for all available options
+const saferNormalizeURL = url => normalizeUrl(url, { forceHttps: true });
+const cache = new FetchCache<string, string>({ fetch, normalizeURL: saferNormalizeURL });
 ```
 
 ## Contributors
 
+- [@dakeyras7](https://github.com/dakeyras7)
 - [@lennerd](https://github.com/lennerd)
 - [@mutaphysis](https://github.com/mutaphysis)
 - [@opyh](https://github.com/opyh)
 
-Supported by <img src='./doc/sozialhelden-logo.svg' width="200">.
+Supported by
+
+<img src='./doc/sozialhelden-logo.svg' width="200">.
