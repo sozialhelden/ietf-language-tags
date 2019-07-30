@@ -82,7 +82,7 @@ fetchCache.cache.peekItem(url);
 // same as `get`, but returns response with meta information
 fetchCache.cache.getItem(url);
 
-// Do this to save memory, for example in intervals
+// Let the cache collect garbage to save memory, for example in fixed time intervals
 fetchCache.cache.evictExpiredItems();
 
 // removes a response from the cache
@@ -92,36 +92,54 @@ fetchCache.cache.delete(url);
 fetchCache.cache.clear();
 ```
 
-### Use different TTLs depending on HTTP response code and headers
+### Vary TTLs depending on HTTP response code, headers, and more
+
+While the cache tries to [guess working TTLs for most use cases](./src/defaultTTL.ts), you might
+want to customize how long a response (or rejected promise) should stay in the cache before it
+makes a new request when you fetch the same URL again.
+
+For example, you could set the TTL to one second, no matter if a request succeeds or fails (please
+don't really do this, except you have a good reason):
+
+```typescript
+const fetchCache = new FetchCache({ fetch, ttl: () => 1000 });
+```
+
+…or configure varying TTLs for specific HTTP response status codes (better):
 
 ```typescript
 const fetchCache = new FetchCache({
   fetch,
   ttl: ({ response, state, error }) => {
-    switch (state) {
-      case 'running':
-        return 10000;
-      case 'resolved': {
-        if (response.status === 200) return 120000;
-        if (response.status === 404) return 60000;
-        return 10000;
-      }
-      case 'error':
-        return 123;
+    // state is 'running', 'resolved' or 'rejected' here.
+    if (response) {
+      // If a response is successful, keep it in the cache for 2 minutes
+      if (response.status === 200) return 2 * 60 * 1000;
+      // If a response is successful, keep it in the cache for 10 seconds so it shows up if the
+      // resource begins to exist in the meantime
+      if (response.status === 404) return 10 * 1000;
     }
-    // Keep successful responses in the cache for 2 minutes
-    if (response.status === 200) return 120000;
-    // Allow reattempting failed requests after 10 seconds
-    return 10000;
+    // If you return `undefined` here, the cache will use default TTL values for all other cases.
   },
 });
 ```
 
-### Use URL normalization
+For an overview about more cases, consult [the default implementation](./src/defaultTTL.ts).
 
-This saves ressources when the same content is available under more than one URL:
+### Normalize URLs
+
+You can improve caching performance by letting the cache know if more than one URL points to the
+same server-side resource. For this, provide a `normalizeURL` function that builds a canonical URL
+from a given one.
+
+The cache will only hold one response per canonical URL then. This saves memory and network
+bandwidth.
+
+`normalize-url` is a helpful NPM package implementing real-world normalization rules like SSL
+enforcement and `www.` vs. non-`www.`-domain names. You can use it as normalization function:
 
 ```bash
+# Install the package with
 npm install normalize-url
 # or
 yarn add normalize-url
@@ -131,13 +149,13 @@ yarn add normalize-url
 import normalizeURL from 'normalize-url';
 import fetch from 'node-fetch';
 
-// Initialize a cache with URL normalization
-const cache = new FetchCache<string, string>({ fetch, normalizeURL });
-
-// Initialize a cache with configured URL normalization
-// See https://github.com/sindresorhus/normalize-url#readme for all available options
-const saferNormalizeURL = url => normalizeUrl(url, { forceHttps: true });
-const cache = new FetchCache<string, string>({ fetch, normalizeURL: saferNormalizeURL });
+// See https://github.com/sindresorhus/normalize-url#readme for all available normalization options
+const cache = new FetchCache({
+  fetch,
+  normalizeURL(url) {
+    return normalizeURL(url, { forceHttps: true });
+  },
+});
 ```
 
 ## Contributors
