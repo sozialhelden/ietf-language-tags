@@ -47,15 +47,15 @@ export default class FetchCache<
       .fetch(url, init)
       .then(response => {
         Object.assign(value, { response, state: 'resolved' });
+        const ttl = options.ttl(value);
+        cache.setTTL(url, ttl === undefined ? defaultTTL(value) : ttl);
         return response;
       })
       .catch(error => {
         Object.assign(value, { error, state: 'rejected' });
-        throw error;
-      })
-      .finally(() => {
         const ttl = options.ttl(value);
         cache.setTTL(url, ttl === undefined ? defaultTTL(value) : ttl);
+        throw error;
       }) as ReturnType<FetchT>;
     const value: CachedValue<ResponseT> = {
       promise,
