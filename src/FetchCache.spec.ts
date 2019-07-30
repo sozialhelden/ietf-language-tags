@@ -13,7 +13,8 @@ import { TTLFunction } from './types';
 
 async function createMinimalServer(): Promise<http.Server> {
   const app = express();
-  app.get('/works', (req, res: express.Response) => res.send('👍'));
+  // tslint:disable-next-line: variable-name
+  app.get('/works', (_req, res: express.Response) => res.send('👍'));
   app.get('/timeout/:milliseconds', (req, res: express.Response) => () => {
     setTimeout(() => res.send('👍'), req.params.milliseconds);
   });
