@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "module": "esnext",
+    "module": "es2015",
     "declaration": true,
     "sourceMap": true,
     "downlevelIteration": true,
@@ -11,8 +11,17 @@
     "outDir": "dist",
     "lib": ["es2017", "dom"],
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "removeComments": true
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictFunctionTypes": true,
+    "alwaysStrict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "removeComments": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "dist"]
 }

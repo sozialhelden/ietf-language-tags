@@ -3,13 +3,12 @@
 A cache for WhatWG fetch calls.
 
 - Supports TypeScript
-- Uses URLs as cache keys
-- Isometric - runs in NodeJS and the browser
+- Uses normalized URLs as cache keys
+- Can normalize URLs for better performance (you can configure how)
 - Does not request the same resource twice if the first request is still loading
-- Normalizes URLs for performance (you can configure how)
 - Customizable TTLs per request, dependent on HTTP status code or in case of network errors
-- Aborts requests on timeout or cache eviction before an incoming response, using [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
 - Supports all [Hamster Cache](https://github.com/sozialhelden/hamster-cache) features, e.g. eviction based on LRU, maximal cached item count and/or per-item TTL.
+- Runs in NodeJS, but should be isometric && browser-compatible (not tested yet! try at your own risk 🙃)
 
 ## Installation
 
@@ -46,8 +45,6 @@ const fetchCache = new FetchCache({
     maximalItemCount: 100,
     // When should the cache evict responses when its full?
     evictExceedingItemsBy: 'lru', // Valid values: 'lru' or 'age'
-    // Cache responses for 2 minutes
-    defaultTTL: 2 * 60 * 1000,
     // ...see https://github.com/sozialhelden/hamster-cache for all possible options
   },
 });
@@ -95,19 +92,28 @@ fetchCache.cache.delete(url);
 fetchCache.cache.clear();
 ```
 
-### Use different TTLs by HTTP response code
+### Use different TTLs depending on HTTP response code and headers
 
 ```typescript
 const fetchCache = new FetchCache({
   fetch,
-  responseTTL = response => {
+  ttl: ({ response, state, error }) => {
+    switch (state) {
+      case 'running':
+        return 10000;
+      case 'resolved': {
+        if (response.status === 200) return 120000;
+        if (response.status === 404) return 60000;
+        return 10000;
+      }
+      case 'error':
+        return 123;
+    }
     // Keep successful responses in the cache for 2 minutes
     if (response.status === 200) return 120000;
     // Allow reattempting failed requests after 10 seconds
     return 10000;
   },
-  // Evict failed fetch promises after 10 seconds
-  errorTTL: error => 10000,
 });
 ```
 
