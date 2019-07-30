@@ -49,7 +49,8 @@ const fetchCache = new FetchCache({
   },
 });
 
-// fetches a response over the network, or re-uses a cached response if available
+// either fetches a response over the network,
+// or returns a cached promise with the same URL (if available)
 const url = 'https://jsonplaceholder.typicode.com/todos/1';
 fetchCache
   .fetch(url, fetchOptions)
