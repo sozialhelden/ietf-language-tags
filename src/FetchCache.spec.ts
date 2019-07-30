@@ -19,7 +19,7 @@ async function createMinimalServer(): Promise<http.Server> {
     setTimeout(() => res.send('👍'), req.params.milliseconds);
   });
   return new Promise(resolve => {
-    const server = app.listen(0, () => resolve(server));
+    const server: http.Server = app.listen({ host: '127.0.0.1', port: 0 }, () => resolve(server));
   });
 }
 
