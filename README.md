@@ -49,7 +49,7 @@ const fetchCache = new FetchCache({
   },
 });
 
-// fetches a response, with side effect that the cache evicts a cached expired response
+// fetches a response over the network, or re-uses a cached response if available
 const url = 'https://jsonplaceholder.typicode.com/todos/1';
 fetchCache
   .fetch(url, fetchOptions)
