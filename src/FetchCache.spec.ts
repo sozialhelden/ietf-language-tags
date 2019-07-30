@@ -204,6 +204,7 @@ describe('FetchCache', () => {
           `http://[${address.address}]:${address.port}/works`;
         const promise = url && cache.fetch(url).then(r => r.text());
         await expect(promise).resolves.toBe('👍');
+        app.close();
       });
 
       it('works when aborting using AbortController', async () => {
@@ -223,6 +224,7 @@ describe('FetchCache', () => {
         await expect(promise).rejects.toMatchObject({ message: 'The user aborted a request.' });
         // With the default TTL implementation, we expect that the response is marked for eviction.
         expect(url && cache.cache.peekItem(url)).toMatchObject({ expireAfterTimestamp: 1000 });
+        app.close();
       });
     });
 

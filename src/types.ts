@@ -15,7 +15,6 @@ export type CachedValue<ResponseT extends IMinimalResponse> =
       state: 'running';
     }
   | {
-      error: never;
       promise: Promise<ResponseT>;
       response?: ResponseT;
       state: 'resolved';
@@ -23,7 +22,6 @@ export type CachedValue<ResponseT extends IMinimalResponse> =
   | {
       error?: any;
       promise: Promise<ResponseT>;
-      response: never;
       state: 'rejected';
     };
 
