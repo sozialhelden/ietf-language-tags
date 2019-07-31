@@ -1,6 +1,6 @@
 import { CachedValue, IMinimalResponse } from './types';
 
-export default function defaultTTL<ResponseT extends IMinimalResponse>(
+export function defaultTTL<ResponseT extends IMinimalResponse>(
   cachedValue: CachedValue<ResponseT>
 ) {
   switch (cachedValue.state) {

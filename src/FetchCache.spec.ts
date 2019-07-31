@@ -8,8 +8,8 @@ import * as http from 'http';
 import nodeFetch from 'node-fetch';
 // tslint:disable-next-line: no-implicit-dependencies
 import normalizeURL from 'normalize-url';
-import FetchCache from './FetchCache';
-import { TTLFunction } from './types';
+
+import FetchCache, { TTLFunction } from './index';
 
 async function createMinimalServer(): Promise<http.Server> {
   const app = express();

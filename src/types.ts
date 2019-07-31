@@ -1,6 +1,6 @@
 import { IOptions as ICacheOptions } from '@sozialhelden/hamster-cache';
 
-type State = 'running' | 'resolved' | 'rejected';
+export type State = 'running' | 'resolved' | 'rejected';
 
 export interface IMinimalResponse {
   status: number;

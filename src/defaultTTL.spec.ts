@@ -1,4 +1,4 @@
-import defaultTTL from './defaultTTL';
+import { defaultTTL } from './index';
 
 describe('defaultTTL', () => {
   it('returns 0 when aborting a request', () => {

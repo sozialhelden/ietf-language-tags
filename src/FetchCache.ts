@@ -1,5 +1,5 @@
 import hamsterCache from '@sozialhelden/hamster-cache';
-import defaultTTL from './defaultTTL';
+import { defaultTTL } from './defaultTTL';
 import { CachedValue, Config, IMinimalResponse, Options } from './types';
 
 interface IHasFetchMethodWithSameReturnTypeAs<T extends (...args: any) => any> {
