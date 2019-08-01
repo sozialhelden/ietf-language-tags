@@ -1,19 +1,19 @@
 {
-  "name": "@sozialhelden/fetch-cache",
+  "name": "@sozialhelden/get-localized-osm-name",
   "private": false,
   "version": "2.0.1",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "author": "Sebastian Felix Zappe <sebastian@sozialhelden.de>",
-  "repository": "sozialhelden/fetch-cache",
+  "repository": "sozialhelden/get-localized-osm-name",
   "files": [
     "dist"
   ],
   "types": "dist/index.d.ts",
   "bundleDependencies": [],
   "deprecated": false,
-  "description": "A cached WhatWG fetch with URLs as cache keys, featuring eviction based on LRU, maximal item count and/or TTL.",
+  "description": "Returns an object with BCP 47 codes to strings, allowing to get the name of an OSM place in a standardized fashion.",
   "devDependencies": {
     "@babel/parser": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -23,23 +23,21 @@
     "@babel/preset-typescript": "^7.3.3",
     "@babel/runtime": "^7.5.5",
     "@babel/types": "^7.5.5",
-    "@types/express": "^4.17.0",
+    "@sozialhelden/ac-format": "^7.4.3",
     "@types/jest": "^24.0.15",
-    "@types/node-fetch": "^2.5.0",
+    "@types/lodash.compact": "^3.0.6",
+    "@types/lodash.pick": "^4.4.6",
     "abort-controller": "^3.0.0",
     "babel-jest": "^24.8.0",
-    "commitizen": "^4.0.3",
     "core-js": "^2.6.9",
     "coveralls": "^3.0.0",
     "cross-env": "^5.1.1",
     "cz-conventional-changelog": "^2.1.0",
-    "express": "^4.17.1",
+    "intl": "^1.2.5",
     "jest": "^24.8.0",
     "jest-cli": "^24.8.0",
-    "node-fetch": "^2.6.0",
-    "normalize-url": "^4.3.0",
+    "lodash.pick": "^4.4.0",
     "rimraf": "^2.6.1",
-    "semantic-release": "^12.0.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.5.0",
     "tslint-config-airbnb": "^5.11.1",
@@ -48,6 +46,7 @@
     "typescript": "^3.3.3333"
   },
   "scripts": {
+    "postinstall": "cp -r ./node_modules/language-subtag-registry/data/json ./src/language-subtag-registry/json",
     "prebuild": "rimraf dist",
     "build-mjs": "tsc -d && mv dist/index.js dist/index.mjs",
     "build-cjs": "tsc -m commonjs",
@@ -67,6 +66,7 @@
     "deploy": "npm run build && npm run test:prod && npm publish --access public"
   },
   "dependencies": {
-    "@sozialhelden/hamster-cache": "^1.0.0"
+    "language-subtag-registry": "^0.3.19",
+    "lodash.compact": "^3.0.1"
   }
 }

@@ -33,10 +33,7 @@ Configure the cache and use `cache.fetch()` as if you would call `fetch()` direc
 
 ```typescript
 import FetchCache from '@sozialhelden/fetch-cache';
-
-const fetch = require('node-fetch'); // in NodeJS
-// or
-const fetch = window.fetch; // in newer browsers
+import fetch, { Response } from 'node-fetch';
 
 const fetchCache = new FetchCache({
   fetch,
@@ -54,7 +51,7 @@ const fetchCache = new FetchCache({
 const url = 'https://jsonplaceholder.typicode.com/todos/1';
 fetchCache
   .fetch(url, fetchOptions)
-  .then(response => response.body())
+  .then((response: Response) => response.body())
   .then(console.log)
   .catch(console.log);
 ```

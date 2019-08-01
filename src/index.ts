@@ -1,6 +1,2 @@
-import FetchCache from './FetchCache';
-
-export * from './defaultTTL';
-export * from './types';
-
-export default FetchCache;
+import getDisplayNameForOSMPlace from './getDisplayNameForOSMPlace';
+export default getDisplayNameForOSMPlace;

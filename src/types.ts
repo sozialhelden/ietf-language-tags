@@ -1,53 +1,31 @@
-import { IOptions as ICacheOptions } from '@sozialhelden/hamster-cache';
-
-export type State = 'running' | 'resolved' | 'rejected';
-
-export interface IMinimalResponse {
-  status: number;
-}
-
-export interface ICachedValueWithState {
-  state: State;
-}
-export type CachedValue<ResponseT extends IMinimalResponse> =
-  | ICachedValueWithState & {
-      promise: Promise<ResponseT>;
-      state: 'running';
-    }
+export type LocalizedString =
+  | string
   | {
-      promise: Promise<ResponseT>;
-      response?: ResponseT;
-      state: 'resolved';
-    }
-  | {
-      error?: any;
-      promise: Promise<ResponseT>;
-      state: 'rejected';
+      [key: string]: string;
     };
 
-export type TTLFunction<ResponseT extends IMinimalResponse> = (
-  cachedValue: CachedValue<ResponseT>
-) => number;
-
-export interface IMandatoryOptions<FetchT> {
-  fetch: FetchT;
+export interface IMinimalLocale {
+  language: string;
+  extlang?: string;
+  script?: string;
+  region?: string;
+  variant?: string;
 }
 
-export interface IOptionalOptions<ResponseT extends IMinimalResponse> {
-  cacheOptions: Partial<ICacheOptions<string, CachedValue<ResponseT>>>;
-  ttl: TTLFunction<ResponseT>;
-  normalizeURL: (url: string) => string;
+export type NameVariant =
+  | 'alternative'
+  | 'international'
+  | 'official'
+  | 'old'
+  | 'regional'
+  | 'national'
+  | 'local'
+  | 'sorting';
+
+export type VariantFlags = Record<NameVariant, boolean>;
+
+export interface IName {
+  string: string;
+  locale?: IMinimalLocale;
+  variantFlags: VariantFlags;
 }
-
-/**
- * Describes fully configured caching behavior. All fields are mandatory.
- */
-export type Config<FetchT, ResponseT extends IMinimalResponse> = Readonly<
-  IMandatoryOptions<FetchT> & IOptionalOptions<ResponseT>
->;
-
-/**
- * Describes
- */
-export type Options<FetchT, ResponseT extends IMinimalResponse> = IMandatoryOptions<FetchT> &
-  Partial<IOptionalOptions<ResponseT>>;

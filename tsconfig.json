@@ -9,7 +9,7 @@
     "sourceRoot": "src",
     "moduleResolution": "node",
     "outDir": "dist",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2018", "dom"],
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -21,7 +21,8 @@
     "noFallthroughCasesInSwitch": true,
     "removeComments": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "dist"]
 }

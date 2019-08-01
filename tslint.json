@@ -4,6 +4,7 @@
     "exclude": ["*.json", "**/*.json"]
   },
   "rules": {
-    "import-name": [0]
+    "import-name": [0],
+    "no-submodule-imports": [0]
   }
 }
