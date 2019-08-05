@@ -21,6 +21,11 @@ The terminology of this library follows [RFC5646](https://tools.ietf.org/html/rf
   document). For example, `Hant` is an [ISO15924](http://www.unicode.org/iso15924) script code that
   was used to define the `Hant` script subtag for use in a language tag.
 
+### How is this related to Unicode CLDR language tags and POSIX locales?
+
+- **Unicode CLDR** uses IETF language tags as basis standard and [adds its own extensions](http://cldr.unicode.org/index/bcp47-extension) - it allows using underscores in the tags, and specifies how to add information about cultural attributes like currencies, measurement units or collations. Most OSes, programming languages and browsers support the CLDR specifications. What's still missing in many libraries is correct support for matching user-preferred and app-supported language tags - while the CLDR specification lists 3 algorithms for matching, only the simplest one is implemented in many places. Rafael Xavier de Souza from the CLDR.js project has an [explanation of the issue](https://github.com/rxaviers/cldrjs/blob/master/doc/bundle_lookup_matcher.md).
+- **POSIX locales** are used in Unix-based systems to determine how apps should handle character sets and string formatting. They are not valid as IETF language tags, and shouldn't be used with this library without a proper conversion.
+
 ## Installation
 
 ```bash
