@@ -50,6 +50,8 @@ yarn add @sozialhelden/ietf-language-tags
     console.log
   );
   ```
+  
+  This returns the language tag for Slovenian in its Resian / San Giorgio dialect of Resian variant:
 
   ```json
   {
