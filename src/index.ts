@@ -1,2 +1,11 @@
-import getDisplayNameForOSMPlace from './getDisplayNameForOSMPlace';
-export default getDisplayNameForOSMPlace;
+export { default as describeIETFLanguageTag } from './describeIETFLanguageTag';
+export { default as generateAlphabeticRange } from './generateAlphabeticRange';
+export { default as parseLanguageTag } from './parseLanguageTag';
+export { default as getMacroLanguage } from './getMacroLanguage';
+export { default as getPreferredLanguageTag } from './getPreferredLanguageTag';
+export { default as getTag } from './getTag';
+export { default as getSubTag } from './getSubTag';
+export { default as indexes } from './indexes';
+export { default as normalizeLanguageTagCasing } from './normalizeLanguageTagCasing';
+export { default as createRFC5646Regexp } from './rfc5646RegExp';
+export * from './types';

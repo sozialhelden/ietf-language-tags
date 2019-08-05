@@ -5,6 +5,7 @@
   },
   "rules": {
     "import-name": [0],
-    "no-submodule-imports": [0]
+    "no-submodule-imports": [false],
+    "prefer-array-literal": [1]
   }
 }

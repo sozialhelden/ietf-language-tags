@@ -839,7 +839,7 @@ RFC 5646                     Language Tags                September 2009
 
 
 Phillips & Davis         Best Current Practice                 [Page 15]
- 
+
 RFC 5646                     Language Tags                September 2009
 
 

@@ -6,3 +6,4 @@ coverage
 *.log
 .idea
 dist
+/src/json

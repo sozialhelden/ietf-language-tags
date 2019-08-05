@@ -1,167 +1,183 @@
-# fetch-cache 🐕
+# `ietf-language-tags`, an npm package for i18n 🇺🇳
 
-A cache for WhatWG fetch calls.
+Tools for working with IETF language tags as specified by
+[BCP 47 / RFC 5646](https://tools.ietf.org/html/rfc5646).
 
-- Supports TypeScript
-- Uses normalized URLs as cache keys
-- Can normalize URLs for better performance (you can configure how)
-- Does not request the same resource twice if the first request is still loading
-- Customizable TTLs per request, dependent on HTTP status code or in case of network errors
-- Supports all [Hamster Cache](https://github.com/sozialhelden/hamster-cache) features, e.g. eviction based on LRU, maximal cached item count and/or per-item TTL.
-- Runs in NodeJS, but should be isometric && browser-compatible (not tested yet! try at your own risk 🙃)
+- Validates given tag strings like `zh-Hant-CN`
+- Interprets complicated (but valid) tags like
+  `zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1`
+- Helps you with getting rid of redundant or deprecated tags
+- Optionally checks given tags against a local copy of the central IETF language tag registry so
+  don't let unregistered subtags slip through
+
+## Terminology
+
+The terminology of this library follows [RFC5646](https://tools.ietf.org/html/rfc5646). To quote the specification:
+
+- **Tag** refers to a complete language tag, such as `sr-Latn-RS` or `az-Arab-IR`.
+- **Subtag** refers to a specific section of a tag, delimited by a hyphen, such as the subtags
+  `zh`, `Hant`, and `CN` in the tag `zh-Hant-CN`.
+- **Code** refers to values defined in external standards (and that are used as subtags in this
+  document). For example, `Hant` is an [ISO15924](http://www.unicode.org/iso15924) script code that
+  was used to define the `Hant` script subtag for use in a language tag.
 
 ## Installation
 
 ```bash
-npm install --save @sozialhelden/fetch-cache
+npm install --save @sozialhelden/ietf-language-tags
 #or
-yarn add @sozialhelden/fetch-cache
+yarn add @sozialhelden/ietf-language-tags
 ```
 
 ## Usage examples
 
-### Initialization
+- Parse a given IETF language tag to get access to its parts:
 
-Bring your own `fetch` - for example:
+  ```typescript
+  const tag = parseLanguageTag(
+    'sl-rozaj-biske',
+    // Set to `true` for returning `undefined` for invalid tags,
+    // outputting errors to the console.
+    // Set to `false` to throw an error if a given tag is invalid.
+    // The library tries to give helpful feedback for typical errors in tags.
+    true,
+    // Allows you to use your own logging function. Supply `null` to suppress console output.
+    console.log
+  );
+  ```
 
-- your modern browser's [fetch function](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
-- [node-fetch](https://github.com/bitinn/node-fetch), a NodeJS implementation
-- [fetch-retry](https://github.com/jonbern/fetch-retry) for automatic request retrying with exponential backoff
-- [isomorphic-unfetch](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch), an isometric implementation for browsers (legacy and modern) and Node.js
+  ```json
+  {
+    "langtag": "sl-rozaj-biske",
+    "language": "sl",
+    "variants": ["rozaj", "biske"]
+  }
+  ```
 
-Configure the cache and use `cache.fetch()` as if you would call `fetch()` directly:
+- Get all information about a given language tag, including descriptions and registry meta infos:
 
-```typescript
-import FetchCache from '@sozialhelden/fetch-cache';
-import fetch, { Response } from 'node-fetch';
+  ```typescript
+  const tagMetaInfo = getTag('zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1');
+  ```
 
-const fetchCache = new FetchCache({
-  fetch,
-  cacheOptions: {
-    // Don't save more than 100 responses in the cache. Allows infinite responses by default
-    maximalItemCount: 100,
-    // When should the cache evict responses when its full?
-    evictExceedingItemsBy: 'lru', // Valid values: 'lru' or 'age'
-    // ...see https://github.com/sozialhelden/hamster-cache for all possible options
-  },
-});
-
-// either fetches a response over the network,
-// or returns a cached promise with the same URL (if available)
-const url = 'https://jsonplaceholder.typicode.com/todos/1';
-fetchCache
-  .fetch(url, fetchOptions)
-  .then((response: Response) => response.body())
-  .then(console.log)
-  .catch(console.log);
-```
-
-### Basic caching operations
-
-```typescript
-// Add an external response promise and cache it for 10 seconds
-const response = fetch('https://api.example.com');
-
-// Insert a response you got from somewhere else
-fetchCache.cache.set('http://example.com', response);
-
-// Set a custom TTL of 10 seconds for this specific response
-fetchCache.cache.set('http://example.com', response, { ttl: 10000 });
-
-// gets the cached response without side effects
-fetchCache.cache.peek(url);
-
-// `true` if a response exists in the cache, `false` otherwise
-fetchCache.cache.has(url);
-
-// same as `peek`, but returns response with meta information
-fetchCache.cache.peekItem(url);
-
-// same as `get`, but returns response with meta information
-fetchCache.cache.getItem(url);
-
-// Let the cache collect garbage to save memory, for example in fixed time intervals
-fetchCache.cache.evictExpiredItems();
-
-// removes a response from the cache
-fetchCache.cache.delete(url);
-
-// forgets all cached responses
-fetchCache.cache.clear();
-```
-
-### Vary TTLs depending on HTTP response code, headers, and more
-
-While the cache tries to [guess working TTLs for most use cases](./src/defaultTTL.ts), you might
-want to customize how long a response (or rejected promise) should stay in the cache before it
-makes a new request when you fetch the same URL again.
-
-For example, you could set the TTL to one second, no matter if a request succeeds or fails (please
-don't really do this, except you have a good reason):
-
-```typescript
-const fetchCache = new FetchCache({ fetch, ttl: () => 1000 });
-```
-
-…or configure varying TTLs for specific HTTP response status codes (better):
-
-```typescript
-const fetchCache = new FetchCache({
-  fetch,
-  ttl: ({ response, state, error }) => {
-    // state is 'running', 'resolved' or 'rejected' here.
-    if (response) {
-      // If a response is successful, keep it in the cache for 2 minutes
-      if (response.status === 200) return 2 * 60 * 1000;
-      // If a response is successful, keep it in the cache for 10 seconds so it shows up if the
-      // resource begins to exist in the meantime
-      if (response.status === 404) return 10 * 1000;
+  ```javascript
+    {
+      extlang: {
+        Added: '2009-07-29',
+        Description: ['Yue Chinese', 'Cantonese'],
+        Macrolanguage: 'zh',
+        'Preferred-Value': 'yue',
+        Prefix: ['zh'],
+        Subtag: 'yue',
+        Type: 'extlang',
+      },
+      parts: {
+        extensions: {
+          a: 'extend1',
+        },
+        extlang: 'yue',
+        langtag: 'zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1',
+        language: 'zh-yue',
+        privateuse: 'x-foobar-private1',
+        region: 'CN',
+        script: 'Latn',
+        variants: ['pinyin'],
+      },
+      privateuse: 'x-foobar-private1',
+      region: {
+        Added: '2005-10-16',
+        Description: ['China'],
+        Subtag: 'CN',
+        Type: 'region',
+      },
+      script: {
+        Added: '2005-10-16',
+        Description: ['Latin'],
+        Subtag: 'Latn',
+        Type: 'script',
+      },
+      variants: [
+        {
+          Added: '2008-10-14',
+          Description: ['Pinyin romanization'],
+          Prefix: ['zh-Latn', 'bo-Latn'],
+          Subtag: 'pinyin',
+          Type: 'variant',
+        },
+      ],
     }
-    // If you return `undefined` here, the cache will use default TTL values for all other cases.
-  },
-});
-```
+  ```
 
-For an overview about more cases, consult [the default implementation](./src/defaultTTL.ts).
+- Return a plain English description of a given tag
 
-### Normalize URLs
+  ```typescript
+  describeIETFLanguageTag('zh-Hans'); // → 'Chinese, written in Han (Simplified variant) script'
+  describeIETFLanguageTag('yue-HK'); // → 'Yue Chinese / Cantonese, as used in Hong Kong'
+  describeIETFLanguageTag('es-419'); // → 'Spanish / Castilian, as used in Latin America and the Caribbean'
+  ```
 
-You can improve caching performance by letting the cache know if more than one URL points to the
-same server-side resource. For this, provide a `normalizeURL` function that builds a canonical URL
-from a given one.
+- Beautify tags to make them more readable
 
-The cache will only hold one response per canonical URL then. This saves memory and network
-bandwidth.
+  ```typescript
+  normalizeLanguageTagCasing('sGn-Be-fR'); // → 'sgn-BE-FR'
+  ```
 
-`normalize-url` is a helpful NPM package implementing real-world normalization rules like SSL
-enforcement and `www.` vs. non-`www.`-domain names. You can use it as normalization function:
+- Get a language tag the IETF language tag registry prefers over the given tag
 
-```bash
-# Install the package with
-npm install normalize-url
-# or
-yarn add normalize-url
-```
+  ```typescript
+  getPreferredLanguageTag('zh-yue'); // → 'yue'
+  getPreferredLanguageTag('i-klingon'); // → 'tlh'
+  ```
 
-```typescript
-import normalizeURL from 'normalize-url';
-import fetch from 'node-fetch';
+- Get a specific, single subtag from the IETF language tag registry:
 
-// See https://github.com/sindresorhus/normalize-url#readme for all available normalization options
-const cache = new FetchCache({
-  fetch,
-  normalizeURL(url) {
-    return normalizeURL(url, { forceHttps: true });
-  },
-});
-```
+  ```typescript
+  getSubTag('extlang', 'hsn');
+  ```
 
-## Contributors
+  ```typescript
+  {
+    Type: 'language',
+    Subtag: 'hsn',
+    Description: ['Xiang Chinese'],
+    Added: '2009-07-29',
+    Macrolanguage: 'zh'
+  }
+  ```
 
-- [@dakeyras7](https://github.com/dakeyras7)
-- [@lennerd](https://github.com/lennerd)
-- [@mutaphysis](https://github.com/mutaphysis)
-- [@opyh](https://github.com/opyh)
+- Match against a RegExp mimicking the RFC specs, without further semantic checks:
+
+  ```typescript
+  const regexp = createRFC5646Regexp();
+  const match = 'zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1'.match(regexp);
+  ```
+
+  ```typescript
+  {
+    region: "CN",
+    script: "Latn",
+    extlang: "yue",
+    language: "zh-yue",
+    variants: "-pinyin" // can contain one or more variants in one string
+    extensions: "-a-extend1", // can contain one or more extensions in one string
+    privateuse: "x-foobar-private1",
+    privateuse2: undefined, // For tags that consist of nothing more than a private-use subtag
+    langtag: "zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1",
+  }
+  ```
+
+## Credits / License
+
+Contributors to this package:
+
+- [Sebastian Felix Zappe](https://twitter.com/opyh)
+
+Thanks to [@mcaruanagalizia](<(https://twitter.com/mcaruanagalizia)>) for maintaining the
+`language-subtag-registry` NPM package, which this package relies on.
+
+Update scripts copyright (c) 2013, [Matthew Caruana Galizia](https://twitter.com/mcaruanagalizia) and licensed under and [MIT license](http://mattcg.mit-license.org/).
+
+The JSON database is licensed under the [Open Data Commons Attribution License (ODC-BY)](http://opendatacommons.org/licenses/by/1.0/).
 
 Supported by
 

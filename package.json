@@ -1,19 +1,19 @@
 {
-  "name": "@sozialhelden/get-localized-osm-name",
+  "name": "@sozialhelden/ietf-language-tags",
   "private": false,
-  "version": "2.0.1",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "author": "Sebastian Felix Zappe <sebastian@sozialhelden.de>",
-  "repository": "sozialhelden/get-localized-osm-name",
+  "repository": "sozialhelden/ietf-language-tags",
   "files": [
     "dist"
   ],
   "types": "dist/index.d.ts",
   "bundleDependencies": [],
   "deprecated": false,
-  "description": "Returns an object with BCP 47 codes to strings, allowing to get the name of an OSM place in a standardized fashion.",
+  "description": "Helps you working with IETF language tags as specified by BCP 47 / RFC 5646.",
   "devDependencies": {
     "@babel/parser": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -46,7 +46,7 @@
     "typescript": "^3.3.3333"
   },
   "scripts": {
-    "postinstall": "cp -r ./node_modules/language-subtag-registry/data/json ./src/language-subtag-registry/json",
+    "postinstall": "cp -r ./node_modules/language-subtag-registry/data/json ./src",
     "prebuild": "rimraf dist",
     "build-mjs": "tsc -d && mv dist/index.js dist/index.mjs",
     "build-cjs": "tsc -m commonjs",
@@ -66,7 +66,11 @@
     "deploy": "npm run build && npm run test:prod && npm publish --access public"
   },
   "dependencies": {
+    "@types/lodash.difference": "^4.5.6",
+    "@types/lodash.uniq": "^4.5.6",
     "language-subtag-registry": "^0.3.19",
-    "lodash.compact": "^3.0.1"
+    "lodash.compact": "^3.0.1",
+    "lodash.difference": "^4.5.0",
+    "lodash.uniq": "^4.5.0"
   }
 }

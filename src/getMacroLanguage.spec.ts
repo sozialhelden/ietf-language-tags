@@ -1,4 +1,4 @@
-import getMacroLanguage from './getMacroLang';
+import { getMacroLanguage } from '.';
 
 describe('getMacroLanguage()', () => {
   it('works', () => {

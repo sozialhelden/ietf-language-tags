@@ -10,6 +10,7 @@ import { IRegistryEntry } from './types';
 export default function getMacroLanguage(languageCode: string): IRegistryEntry | undefined {
   const index = indexes.language[languageCode];
   const macrolanguageCode = indexes.registry[index].Macrolanguage;
-  const macrolanguage = indexes.macrolanguage[macrolanguageCode];
-  return indexes.registry[macrolanguage];
+  const macrolanguage =
+    typeof macrolanguageCode !== 'undefined' && indexes.macrolanguage[macrolanguageCode];
+  return macrolanguage ? indexes.registry[macrolanguage] : undefined;
 }
