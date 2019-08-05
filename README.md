@@ -1,4 +1,4 @@
-# `ietf-language-tags`, an npm package for i18n 🇺🇳
+# ietf-language-tags 🇺🇳
 
 Tools for working with IETF language tags as specified by
 [BCP 47 / RFC 5646](https://tools.ietf.org/html/rfc5646).
