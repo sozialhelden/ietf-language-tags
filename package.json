@@ -46,8 +46,7 @@
     "typescript": "^3.3.3333"
   },
   "scripts": {
-    "postinstall": "cp -r ./node_modules/language-subtag-registry/data/json ./src",
-    "prebuild": "rimraf dist",
+    "prebuild": "cp -r ./node_modules/language-subtag-registry/data/json ./src && rimraf dist",
     "build-mjs": "tsc -d && mv dist/index.js dist/index.mjs",
     "build-cjs": "tsc -m commonjs",
     "build": "npm run build-mjs && npm run build-cjs && rm dist/*.spec.*",
