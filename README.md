@@ -3,6 +3,7 @@
 Tools for working with IETF language tags as specified by
 [BCP 47 / RFC 5646](https://tools.ietf.org/html/rfc5646).
 
+- Aims to implement the full RFC spec
 - Validates given tag strings like `zh-Hant-CN`
 - Interprets complicated (but valid) tags like
   `zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1`
