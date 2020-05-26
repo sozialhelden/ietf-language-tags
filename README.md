@@ -180,8 +180,7 @@ Contributors to this package:
 
 - [Sebastian Felix Zappe](https://twitter.com/opyh)
 
-Thanks to [@mcaruanagalizia](<(https://twitter.com/mcaruanagalizia)>) for maintaining the
-`language-subtag-registry` NPM package, which this package relies on.
+Thanks to Matthew Caruana Galizia for maintaining the [`language-subtag-registry`](https://www.npmjs.com/package/language-subtag-registry) NPM package, which this package is based on.
 
 Update scripts copyright (c) 2013, [Matthew Caruana Galizia](https://twitter.com/mcaruanagalizia) and licensed under and [MIT license](http://mattcg.mit-license.org/).
 
