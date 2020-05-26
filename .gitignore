@@ -7,3 +7,4 @@ coverage
 .idea
 dist
 /src/json
+tests/integration/package-lock.json

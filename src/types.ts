@@ -29,7 +29,7 @@ export interface IRegistryEntry {
    * tags listed in either the 'regular' or 'irregular' production
    * found in Section 2.1.
    */
-  Tag: string;
+  Tag?: string;
 
   /*
    * Subtag's field-body contains the subtag being defined.  This
@@ -54,7 +54,7 @@ export interface IRegistryEntry {
    * either 'language' or 'extlang'.  When this field is omitted,
    * the language is an individual language. (RFC 5646)
    */
-  Scope: string;
+  Scope?: string;
 
   /*
    * Added's field-body contains the date the record was registered

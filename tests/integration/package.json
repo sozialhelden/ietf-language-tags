@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@sozialhelden/ietf-language-tags": "^3.2.4"
+  }
+}

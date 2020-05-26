@@ -61,7 +61,7 @@ describe('getSubTag()', () => {
 
   it('returns a variant subtag', () => {
     expect(f('variant', 'xsistemo')).toMatchObject({
-      Description: ['Standard X-system orthographic fallback for spelling', 'Esperanto'],
+      Description: ['Standard X-system orthographic fallback for spelling Esperanto'],
     });
   });
 

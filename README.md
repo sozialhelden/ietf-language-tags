@@ -34,11 +34,14 @@ npm install --save @sozialhelden/ietf-language-tags
 yarn add @sozialhelden/ietf-language-tags
 ```
 
+_Important:_ Your build system must be able to import/require `.json` files and support ES6.
+
 ## Usage examples
 
 - Parse a given IETF language tag to get access to its parts:
 
   ```typescript
+  import { parseLanguageTag } from '@sozialhelden/ietf-language-tags';
   const tag = parseLanguageTag(
     'sl-rozaj-biske',
     // Set to `true` for returning `undefined` for invalid tags,
@@ -50,7 +53,7 @@ yarn add @sozialhelden/ietf-language-tags
     console.log
   );
   ```
-  
+
   This returns the language tag for Slovenian in its Resian / San Giorgio dialect of Resian variant:
 
   ```json
