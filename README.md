@@ -34,8 +34,6 @@ npm install --save @sozialhelden/ietf-language-tags
 yarn add @sozialhelden/ietf-language-tags
 ```
 
-_Important:_ Your build system must be able to import/require `.json` files and support ES6.
-
 ## Usage examples
 
 - Parse a given IETF language tag to get access to its parts:
