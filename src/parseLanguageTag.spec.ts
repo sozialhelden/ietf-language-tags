@@ -233,8 +233,14 @@ describe('parseLanguageTag()', () => {
       consoleSpy.mockRestore();
     });
 
+    it("doesn't accept empty strings as tags", () => {
+      expect(() => f('', false)).toThrowError(/empty/);
+      expect(f('', true)).toBeUndefined();
+    });
+
     it("doesn't accept underscores in tags, as they are a typical mistake", () => {
       expect(() => f('en_NZ', false)).toThrowError(/underscore/);
+      expect(f('en_NZ', true)).toBeUndefined();
     });
 
     it("doesn't accept two region tags (not ignoring the error, throwing)", () => {
@@ -251,6 +257,7 @@ describe('parseLanguageTag()', () => {
 
     it("doesn't accept tags with the same variant twice", () => {
       expect(() => f('de-DE-1901-1901', false)).toThrowError(/‘1901’/);
+      expect(f('de-DE-1901-1901', true)).toBeUndefined();
     });
   });
 });
