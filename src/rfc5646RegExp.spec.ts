@@ -14,7 +14,7 @@ describe('createRFC5646Regexp()', () => {
       if (!match) {
         throw new Error('RegExp must match the given string.');
       }
-      const groups = match.groups;
+      const { groups } = match;
 
       expect(groups).toEqual({
         extensions: '-a-extend1',
@@ -32,7 +32,7 @@ describe('createRFC5646Regexp()', () => {
 
   it('does not match the most basic invalid tags', () => {
     const match = 'zhzhzhzhzhzh-Latn-CN-pinyin-a-extend1-x-foobar-private1-abc-def-ghi-jkl-mno-pqr'.match(
-      regexp
+      regexp,
     );
     expect(match).toBeNull();
   });

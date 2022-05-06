@@ -7,8 +7,8 @@ export function nextString(input: string): string {
     return `${prefix}a`;
   }
   return (
-    input.substring(0, input.length - 1) +
-    String.fromCharCode(input[input.length - 1].charCodeAt(0) + 1)
+    input.substring(0, input.length - 1)
+    + String.fromCharCode(input[input.length - 1].charCodeAt(0) + 1)
   );
 }
 
@@ -23,8 +23,8 @@ export default function generateAlphabeticRange(rangeString: string, includeRang
     result.push(currentValue);
     currentValue = nextString(currentValue);
   } while (
-    (end && currentValue.length < end.length) ||
-    (includeRangeEnd ? currentValue <= end : currentValue < end)
+    (end && currentValue.length < end.length)
+    || (includeRangeEnd ? currentValue <= end : currentValue < end)
   );
   return result;
 }

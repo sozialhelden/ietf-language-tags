@@ -227,7 +227,7 @@ describe('parseLanguageTag()', () => {
   describe('reactions to invalid tags', () => {
     it('prints errors to the console when supplying `true` as second parameter', () => {
       let loggedString;
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(s => (loggedString = s));
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation((s) => { loggedString = s; });
       expect(f('a-DE', true)).toBeUndefined();
       expect(loggedString).toMatch(/Could not interpret ‘a-DE’/);
       consoleSpy.mockRestore();
