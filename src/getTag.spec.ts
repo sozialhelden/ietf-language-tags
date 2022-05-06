@@ -1,6 +1,10 @@
 import { getTag } from '.';
 
 describe('getTag()', () => {
+  it('returns undefined for an undefined tag', () => {
+    expect(getTag('', true)).toBeUndefined();
+  });
+
   it('returns an object with registry references + parsed meta infos', () => {
     expect(getTag('zh-yue-Latn-CN-pinyin-a-extend1-x-foobar-private1')).toEqual({
       extlang: {

@@ -46,8 +46,8 @@ export function expandTag(parsedLanguageTag: ILanguageSubtag): ILanguageTag | un
   return languageTag;
 }
 
-export default function getTag(tag: string): ILanguageTag | undefined {
-  const parsedLanguageTag = parseLanguageTag(tag);
+export default function getTag(tag: string, ignoreErrors: boolean = false): ILanguageTag | undefined {
+  const parsedLanguageTag = parseLanguageTag(tag, ignoreErrors);
   if (!parsedLanguageTag) {
     return undefined;
   }
