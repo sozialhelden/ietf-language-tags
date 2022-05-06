@@ -43,7 +43,7 @@ export interface IRegistryEntry {
    * Description's field-body contains a non-normative description
    * of the subtag or tag.
    */
-  Description: string[];
+  Description?: string[];
 
   /**
    * Scope's field-body contains information about a primary or

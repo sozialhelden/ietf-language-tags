@@ -29,7 +29,7 @@ export default function describeIETFLanguageTag(tag: string) {
 
   const variantString = languageTag.variants
     && languageTag.variants
-      .map((v) => v.Description[0]
+      .map((v) => (v?.Description?.[0] || `‘${v}’ variant`)
         .replace(/^The /, '')
         .replace(languageName || '', '')
         .replace(/^, /, ''))
@@ -47,21 +47,20 @@ export default function describeIETFLanguageTag(tag: string) {
     variantPrefix
     + compact([
       languageTag.grandfathered && `${languageTag.grandfathered.Description} (grandfathered tag)`,
-      languageTag.extlang && languageTag.extlang.Description.join(' / '),
-      languageTag.macrolanguage && languageTag.macrolanguage.Description,
-      languageTag.collection && languageTag.collection.Description,
-      languageTag.language
+      languageTag.extlang?.Description?.join(' / '),
+      languageTag.macrolanguage?.Description,
+      languageTag.collection?.Description,
+      languageTag.language?.Description
         && wrapPrivateUse('language', languageTag, languageTag.language.Description).join(' / '),
-      languageTag.script
+      languageTag.script?.Description
         && `written in ${wrapPrivateUse('script', languageTag, languageTag.script.Description).join(
           '/',
         )} script`,
-      languageTag.region
+      languageTag.region?.Description
         && `as used in ${wrapPrivateUse('region', languageTag, languageTag.region.Description)}`,
-      languageTag.redundant && languageTag.redundant.Description,
-      languageTag.special && languageTag.special.Description,
+      languageTag.redundant?.Description,
+      languageTag.special?.Description,
       languageTag.extensions
-        // Object.keys(languageTag.extensions).length &&
         && `Extensions: ${languageTag.extensions}`,
     ]).join(', ')
   ).replace(/\s+/g, ' ');
