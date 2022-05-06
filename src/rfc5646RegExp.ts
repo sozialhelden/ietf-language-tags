@@ -2,7 +2,7 @@ import indexes from './indexes';
 
 function matchKey(record: Record<string, any>) {
   const joinedKeys = Object.keys(record)
-    .map(k => k.replace(/\./g, '\\.'))
+    .map((k) => k.replace(/\./g, '\\.'))
     .join('|');
 
   return `(?:${joinedKeys})`;
@@ -34,9 +34,9 @@ export default function createRFC5646Regexp(useRegistry: boolean = false): RegEx
   const region = useRegistry ? matchKey(indexes.region) : '(?:[a-z]{2}|[0-9]{3})';
   // registered variants, e.g. '1901' or 'rozaj'
   const variant = useRegistry ? matchKey(indexes.variant) : '(?:[a-z0-9]{5,8}|[0-9][a-z0-9]{3})';
-  const singleton = `[0-9a-wy-z]`;
+  const singleton = '[0-9a-wy-z]';
   const extension = `${singleton}(?:-[a-z0-9]{2,8})+`;
-  const privateuse = `x(?:-[a-z0-9]{1,8})+`;
+  const privateuse = 'x(?:-[a-z0-9]{1,8})+';
 
   // shortest ISO 639 code sometimes followed by extended language subtags or registered language
   // subtag (no 'reserved for future use' case here to not overmatch)

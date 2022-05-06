@@ -8,7 +8,7 @@ export default function parseLanguageTag(
   inputTag: string,
   ignoreErrors: boolean = false,
   // tslint:disable-next-line: no-console
-  log: ((message: string) => void) | null = console.log
+  log: ((message: string) => void) | null = console.log,
 ): ILanguageSubtag | undefined {
   if (inputTag.match(/_/)) {
     invariant(errorMessages.underscoresFound(inputTag), ignoreErrors, log);
@@ -33,7 +33,7 @@ export default function parseLanguageTag(
     const matches = (groups.extensions as string)
       .toLowerCase()
       .match(/(?:[0-9a-wy-z](?:-[a-z0-9]{2,8})+)/g);
-    Array.from(matches || []).forEach(extension => {
+    Array.from(matches || []).forEach((extension) => {
       const previousValue = extensions[extension[0]];
       if (previousValue) {
         invariant(errorMessages.invalidExtension(tag, extension, previousValue), ignoreErrors, log);
@@ -46,11 +46,11 @@ export default function parseLanguageTag(
     return undefined;
   }
 
-  const variants = groups.variants ? groups.variants.split(/-/).filter(s => s !== '') : undefined;
+  const variants = groups.variants ? groups.variants.split(/-/).filter((s) => s !== '') : undefined;
   const uniqueVariants = new Set(variants);
   if (variants && variants.length !== uniqueVariants.size) {
     const firstDuplicateVariant = Array.from(uniqueVariants).find(
-      variant => variants.filter(v => v === variant).length > 1
+      (variant) => variants.filter((v) => v === variant).length > 1,
     );
     if (firstDuplicateVariant) {
       invariant(errorMessages.duplicateVariant(tag, firstDuplicateVariant), ignoreErrors, log);
@@ -72,7 +72,7 @@ export default function parseLanguageTag(
   };
 
   // tslint:disable-next-line: prefer-array-literal
-  (Object.keys(result) as Array<keyof (typeof result)>).forEach(k => {
+  (Object.keys(result) as Array<keyof (typeof result)>).forEach((k) => {
     const value = result[k];
     if (typeof value === 'undefined' || value === '') {
       delete result[k];

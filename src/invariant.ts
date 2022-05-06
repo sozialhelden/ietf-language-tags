@@ -1,7 +1,7 @@
 export default function invariant(
   message: string,
   ignoreErrors: boolean,
-  log: ((message: string) => void) | null
+  log: ((message: string) => void) | null,
 ) {
   if (ignoreErrors) {
     if (log !== null) {
