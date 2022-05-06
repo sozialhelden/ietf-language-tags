@@ -41,11 +41,12 @@ const indexes: IIndexes = {
 // between 'qaa' and 'qzz'. This adds all possible combinations of letters in the given ranges
 // to the registry:
 
-[indexes.script, indexes.region, indexes.privateuse, indexes.language].forEach((index) => {
-  Object.keys(index).forEach((key) => {
+[indexes.script, indexes.region, indexes.privateuse, indexes.language].forEach((indexToExtend) => {
+  Object.keys(indexToExtend).forEach((key) => {
     if (key.match('..')) {
       generateAlphabeticRange(key).forEach((generatedKey) => {
-        index[generatedKey] = index[key];
+        // eslint-disable-next-line no-param-reassign
+        indexToExtend[generatedKey] = indexToExtend[key];
       });
     }
   });
