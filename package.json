@@ -3,8 +3,14 @@
   "private": false,
   "version": "3.4.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "exports": {
+      ".": {
+          "import": "./dist/mjs/index.js",
+          "require": "./dist/cjs/index.js"
+      }
+  },
   "author": "Sebastian Felix Zappe <sebastian@sozialhelden.de>",
   "repository": "sozialhelden/ietf-language-tags",
   "files": [
@@ -39,11 +45,11 @@
     "@types/lodash": "^4.14.182"
   },
   "scripts": {
-    "build:mjs": "tsc -d && mv dist/index.js dist/index.mjs",
-    "build:cjs": "tsc -m commonjs",
+    "build:mjs": "tsc -d --module esnext --target esnext --outDir dist/mjs && echo { \"type\": \"module\"} > dist/mjs/package.json",
+    "build:cjs": "tsc -m commonjs --target es5 --outDir dist/cjs && echo { \"type\": \"commonjs\"} > dist/cjs/package.json",
     "build:copy-json": "cp -r ./node_modules/language-subtag-registry/data/json ./src",
     "build:compile-json": "find src/json/*.json | xargs -I {} sh -c 'printf \"// @ts-ignore\nexport default \" > {}.ts && cat {} >> {}.ts && rm {}'",
-    "build": "rimraf dist && npm run build:copy-json && npm run build:compile-json && npm run build:mjs && npm run build:cjs && rm dist/*.spec.*",
+    "build": "rimraf dist && npm run build:copy-json && npm run build:compile-json && npm run build:mjs && npm run build:cjs && rm dist/**/*.spec.*",
     "start": "tsc -w",
     "test": "jest",
     "lint": "eslint",

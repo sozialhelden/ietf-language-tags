@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "es2015",
     "declaration": true,
     "sourceMap": true,
     "downlevelIteration": true,
@@ -9,7 +7,7 @@
     "sourceRoot": "src",
     "moduleResolution": "node",
     "outDir": "dist",
-    "lib": ["es2018", "dom"],
+    "lib": ["esnext", "dom"],
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -21,7 +19,9 @@
     "noFallthroughCasesInSwitch": true,
     "removeComments": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "strict": true
   },
-  "exclude": ["node_modules", "dist", "tests", "coverage"]
+  "exclude": ["node_modules", "dist", "tests", "coverage"],
+  "include": ["src"]
 }
